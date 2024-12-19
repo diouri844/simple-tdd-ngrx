@@ -7,8 +7,8 @@ export interface AppState {
 
 export interface actionType {
     type:any;
-    task: Task|null;
-    id: number|null
+    task: Task;
+    id: number;
 };
 
 export const intialState :AppState = {
@@ -21,13 +21,13 @@ export function taskReducer(state:AppState = intialState, action:actionType):App
         case addTask.type:
             return {
                 ...state,
-                tasks: [...state.tasks, action.task?]
+                tasks: [...state.tasks, action.task]
             };
         case updateTask.type:
             return {
                 ...state,
                 tasks: state.tasks.map( 
-                    (taskItem:Task)=> (taskItem.id === action.task?.id? action.task = taskItem)
+                    (taskItem:Task) => (taskItem.id === action.task?.id? action.task:taskItem)
                 )
             };
         case deleteTask.type:
