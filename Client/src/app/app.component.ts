@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 // import { RouterOutlet } from '@angular/router';
 import { Task } from './states/tasks/task.model';
-import { Store, StoreModule } from '@ngrx/store';
-import { addTask, deleteTask, loadTasks, loadTasksSuccess, updateTask } from './states/tasks/task.action';
 import { CommonModule } from '@angular/common';
-import { taskReducer } from './states/tasks/task.reducer';
 import { Observable } from 'rxjs';
-import { selectAllTasks } from './states/tasks/task.selectors';
+import { Store } from '@ngrx/store';
+import { AppState } from './states/store/app.state';
+import * as taskSelectore from './states/tasks/task.selectors';
+import { addTask, deleteTask, loadTasks, updateTask } from './states/tasks/task.action';
 
 @Component({
   selector: 'app-root',
@@ -19,15 +19,26 @@ import { selectAllTasks } from './states/tasks/task.selectors';
 })
 export class AppComponent {
   title = 'ngrx-crud-app';
+  tasks$: Observable<Task[]>;
+  loading$: Observable<boolean>;
+  error$: Observable<string|null>;
+  taskList :Task[] = [];
   // setup tasks : 
-  tasks$:Observable<Task[]>;
-  constructor( private store :Store){
-    this.tasks$ = this.store.select(selectAllTasks);
+  constructor( private store :Store<AppState>){
+    this.tasks$ = this.store.select(taskSelectore.selectAllTasks);
+    this.loading$ = this.store.select(taskSelectore.selectTasksLoading);
+    this.error$ = this.store.select(taskSelectore.selectTasksError);
   }
-
+  
   ngOnInit(){
     this.store.dispatch(loadTasks());
-  }
+    this.tasks$.subscribe(
+      tasks => {
+        this.taskList = tasks 
+      }
+    );
+    console.log( this.taskList);
+  };
 
 
   // setup action functions : 
@@ -38,9 +49,8 @@ export class AppComponent {
       title : "New Task ",
       description : "This is a new task pushed to the list "
     };
-    this.store.dispatch(addTask({ task: newTask }));
-    console.log( this.store.select(selectAllTasks).pipe() );
-    // this.store.dispatch(addTask({task:newTask}));
+    // call dispatcher : 
+    this.store.dispatch(addTask({task:newTask}));
   };
   // update task : 
   editTask (newTaskPayload:Task){
@@ -49,8 +59,6 @@ export class AppComponent {
   };
   // delete task : 
   removeTask(taskId:number){
-    // this.store.dispatch(deleteTask({id:taskId}));
+    this.store.dispatch(deleteTask({ id: taskId }));
   }
-
-
 }
