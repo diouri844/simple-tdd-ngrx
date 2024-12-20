@@ -1,0 +1,9 @@
+
+<!-- <router-outlet /> -->
+<div *ngFor="let task of tasks$ |async" class="task">
+  <h3>{{ task.title }}</h3>
+  <p>{{ task.description }}</p>
+  <button (click)="editTask(task)">Update</button>
+  <button (click)="removeTask(task.id)">Delete</button>
+</div>
+<button (click)="addNewTask()">Add New Task</button>
