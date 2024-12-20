@@ -51,6 +51,7 @@ export class AppComponent {
     };
     // call dispatcher : 
     this.store.dispatch(addTask({task:newTask}));
+    // shows up 
   };
   // update task : 
   editTask (newTaskPayload:Task){
