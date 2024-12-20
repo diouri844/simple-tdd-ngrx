@@ -1,15 +1,25 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { Task } from './task.model';
-import { AppState } from '../store/app.state';
+import { AppState, TaskState } from '../store/app.state';
 
-export const selectTasksState = createFeatureSelector<AppState, Task[]>('tasks');
+export const selectTasksState = createFeatureSelector<AppState, TaskState>('tasks');
 
 export const selectAllTasks = createSelector(
   selectTasksState,
-  (tasks: Task[]) => tasks
+  (state: TaskState) => state.tasks
+);
+
+export const selectTasksLoading = createSelector(
+  selectTasksState,
+  (state: TaskState) => state.loading
+);
+
+export const selectTasksError = createSelector(
+  selectTasksState,
+  (state: TaskState) => state.error
 );
 
 export const selectTaskById = (taskId: number) => createSelector(
   selectTasksState,
-  (tasks: Task[]) => tasks.find(task => task.id === taskId)
+  (state:TaskState) => state.tasks.find(task => task.id === taskId)
 );
