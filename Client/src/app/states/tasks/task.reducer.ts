@@ -1,12 +1,25 @@
-import { createReducer, on } from "@ngrx/store";
-import { initialTaskState, taskAdapter } from "./task.state";
-import * as TaskActions from "./task.action";
+import { createReducer, on } from '@ngrx/store';
+import { addTask, deleteTask, loadTasksSuccess, updateTask } from './task.action';
+import { Task } from './task.model';
 
+export interface TaskState {
+  tasks: Task[];
+}
+
+export const initialState: TaskState = {
+  tasks: []
+};
 
 export const taskReducer = createReducer(
-  initialTaskState,
-  on(TaskActions.loadTasksSuccess, (state, { tasks}) => taskAdapter.setAll(tasks,state)),
-  on(TaskActions.addTask, (state, { task }) =>  taskAdapter.addOne(task,state)),
-  on(TaskActions.updateTask, (state, { task }) => taskAdapter.updateOne({id:task.id, changes:task},state)),
-  on(TaskActions.deleteTask, (state, { id }) => taskAdapter.removeOne(id,state))
+  initialState,
+  on(loadTasksSuccess, (state, { tasks }) => ({ ...state, tasks })),
+  on(addTask, (state, { task }) => ({ ...state, tasks: [...state.tasks, task] })),
+  on(updateTask, (state, { task }) => ({
+    ...state,
+    tasks: state.tasks.map(t => (t.id === task.id ? task : t))
+  })),
+  on(deleteTask, (state, { id }) => ({
+    ...state,
+    tasks: state.tasks.filter(task => task.id !== id)
+  }))
 );

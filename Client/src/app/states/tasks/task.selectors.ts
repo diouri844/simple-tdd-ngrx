@@ -1,18 +1,15 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { taskAdapter, TaskState } from './task.state';
+import { createSelector, createFeatureSelector } from '@ngrx/store';
+import { Task } from './task.model';
+import { AppState } from '../store/app.state';
 
-export const selectTaskState = createFeatureSelector<TaskState>('tasks');
+export const selectTasksState = createFeatureSelector<AppState, Task[]>('tasks');
 
-const { selectAll, selectEntities } = taskAdapter.getSelectors();
-
-export const selectAllTasks = createSelector(selectTaskState, selectAll);
-export const selectTaskEntities = createSelector(selectTaskState, selectEntities);
-export const selectSelectedTaskId = createSelector(
-    selectTaskState,
-    (state) => state.selectedTaskId
+export const selectAllTasks = createSelector(
+  selectTasksState,
+  (tasks: Task[]) => tasks
 );
-export const selectSelectedTask = createSelector(
-    selectTaskEntities,
-    selectSelectedTaskId,
-    (entities, selectedId) => selectedId ? entities[selectedId] : null
+
+export const selectTaskById = (taskId: number) => createSelector(
+  selectTasksState,
+  (tasks: Task[]) => tasks.find(task => task.id === taskId)
 );
