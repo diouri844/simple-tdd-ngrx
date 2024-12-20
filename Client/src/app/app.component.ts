@@ -45,7 +45,7 @@ export class AppComponent {
   addNewTask(){
     console.dir("add task ");
     const newTask:Task = {
-      id: 1,
+      id: this.taskList.length + 1,
       title : "New Task ",
       description : "This is a new task pushed to the list "
     };
